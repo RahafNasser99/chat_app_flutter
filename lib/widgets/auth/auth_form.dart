@@ -1,9 +1,16 @@
 import 'package:chat_app/global/theme.dart';
+import 'package:chat_app/models/user.dart';
 import 'package:chat_app/widgets/auth/text_form_field.dart';
 import 'package:flutter/material.dart';
 
 class AuthForm extends StatefulWidget {
-  const AuthForm({super.key});
+  const AuthForm({super.key, required this.submitFunction});
+
+  final void Function(
+    MyUser user,
+    bool isLogin,
+    BuildContext ctx,
+  ) submitFunction;
 
   @override
   State<AuthForm> createState() => _AuthFormState();
@@ -15,14 +22,17 @@ class _AuthFormState extends State<AuthForm> {
   var _userEmail = '';
   var _userName = '';
   var _userPassword = '';
+  late MyUser _user;
 
   void _trySubmit() {
     FocusScope.of(context).unfocus();
     if (_keyForm.currentState!.validate()) {
       _keyForm.currentState!.save();
-      print(_userEmail);
-      print(_userName);
-      print(_userPassword);
+      _user = MyUser(
+          email: _userEmail.trim(),
+          userName: _userName,
+          password: _userPassword);
+      widget.submitFunction(_user, _isLogin, context);
     }
   }
 
