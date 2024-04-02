@@ -4,13 +4,18 @@ import 'package:chat_app/widgets/auth/text_form_field.dart';
 import 'package:flutter/material.dart';
 
 class AuthForm extends StatefulWidget {
-  const AuthForm({super.key, required this.submitFunction});
+  const AuthForm({
+    super.key,
+    required this.submitFunction,
+    required this.isLoading,
+  });
 
   final void Function(
     MyUser user,
     bool isLogin,
     BuildContext ctx,
   ) submitFunction;
+  final bool isLoading;
 
   @override
   State<AuthForm> createState() => _AuthFormState();
@@ -98,30 +103,33 @@ class _AuthFormState extends State<AuthForm> {
                 const SizedBox(
                   height: 12,
                 ),
-                ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all(appTheme.primaryColor),
+                if (widget.isLoading) const CircularProgressIndicator(),
+                if (!widget.isLoading)
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(appTheme.primaryColor),
+                    ),
+                    onPressed: _trySubmit,
+                    child: Text(
+                      _isLogin ? 'Login' : 'Sign up',
+                      style: const TextStyle(color: Colors.white),
+                    ),
                   ),
-                  onPressed: _trySubmit,
-                  child: Text(
-                    _isLogin ? 'Login' : 'Sign up',
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ),
-                TextButton(
-                  child: Text(
-                    _isLogin
-                        ? 'Create a new account'
-                        : 'I already have an account',
-                    style: TextStyle(color: appTheme.primaryColor),
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _isLogin = !_isLogin;
-                    });
-                  },
-                )
+                if (!widget.isLoading)
+                  TextButton(
+                    child: Text(
+                      _isLogin
+                          ? 'Create a new account'
+                          : 'I already have an account',
+                      style: TextStyle(color: appTheme.primaryColor),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isLogin = !_isLogin;
+                      });
+                    },
+                  )
               ],
             ),
           )),
